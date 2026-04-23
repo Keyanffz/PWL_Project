@@ -20,10 +20,10 @@
             <select name="kode_matkul" required
                 class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-400 outline-none">
                 @foreach($matkul as $m)
-                    <option value="{{ $m['kdmk'] }}"
-                        {{ old('kode_matkul', $tutorial->kode_matkul) == $m['kdmk'] ? 'selected' : '' }}>
-                        {{ $m['kdmk'] }} - {{ $m['name'] }}
-                    </option>
+                    <option value="{{ $m['kdmk'] ?? '' }}"
+    {{ old('kode_matkul', $tutorial->kode_matkul) == ($m['kdmk'] ?? '') ? 'selected' : '' }}>
+    {{ $m['kdmk'] ?? '' }} - {{ $m['name'] ?? $m['nama'] ?? 'Unknown' }}
+</option>
                 @endforeach
             </select>
         </div>

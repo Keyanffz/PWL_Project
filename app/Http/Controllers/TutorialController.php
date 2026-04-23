@@ -9,18 +9,28 @@ use Yajra\DataTables\Facades\DataTables;
 class TutorialController extends Controller
 {
     // Ambil data mata kuliah dari webservice
-    private function getMatkul()
+private function getMatkul()
 {
+    $fallback = [
+        ['kdmk' => 'A11.64404', 'name' => 'Pemrograman Web Lanjut'],
+        ['kdmk' => 'A11.54314', 'name' => 'Pemrograman Berorientasi Objek'],
+        ['kdmk' => 'A11.54216', 'name' => 'Sistem Basis Data'],
+    ];
+
     $token = session('refresh_token');
+    if (!$token) return $fallback;
+
     $response = Http::withToken($token)
         ->get('https://jwt-auth-eight-neon.vercel.app/getMakul');
 
     if ($response->successful()) {
         $data = $response->json();
-        // Coba semua kemungkinan key
-        return $data['data'] ?? $data['results'] ?? $data ?? [];
+        // Kalau API return Forbidden atau tidak ada data, pakai fallback
+        if (isset($data['msg']) || empty($data['data'])) return $fallback;
+        return $data['data'] ?? $fallback;
     }
-    return [];
+
+    return $fallback;
 }
 
     public function index()
@@ -36,19 +46,21 @@ class TutorialController extends Controller
 
         return DataTables::of($tutorials)
             ->addColumn('action', function ($row) {
-                return '
-                    <a href="'.route('tutorials.edit', $row->id).'"
-                        class="bg-yellow-500 hover:bg-yellow-600 text-white text-xs px-3 py-1 rounded">Edit</a>
-                    <form method="POST" action="'.route('tutorials.destroy', $row->id).'" class="inline"
-                        onsubmit="return confirm(\'Yakin hapus?\')">
-                        '.csrf_field().'
-                        '.method_field('DELETE').'
-                        <button class="bg-red-500 hover:bg-red-600 text-white text-xs px-3 py-1 rounded">Hapus</button>
-                    </form>
-                    <a href="'.route('tutorial-details.index', $row->id).'"
-                        class="bg-blue-500 hover:bg-blue-600 text-white text-xs px-3 py-1 rounded">Detail</a>
-                ';
-            })
+    return '
+        <div style="display:flex;gap:4px;align-items:center;">
+            <a href="'.route('tutorials.edit', $row->id).'"
+                style="background:#f59e0b;color:white;font-size:11px;padding:4px 10px;border-radius:6px;text-decoration:none;font-weight:600;">Edit</a>
+            <form method="POST" action="'.route('tutorials.destroy', $row->id).'" style="margin:0"
+                onsubmit="return confirm(\'Yakin hapus?\')">
+                '.csrf_field().'
+                '.method_field('DELETE').'
+                <button style="background:#ef4444;color:white;font-size:11px;padding:4px 10px;border-radius:6px;border:none;cursor:pointer;font-weight:600;">Hapus</button>
+            </form>
+            <a href="'.route('tutorial-details.index', $row->id).'"
+                style="background:#3b82f6;color:white;font-size:11px;padding:4px 10px;border-radius:6px;text-decoration:none;font-weight:600;">Detail</a>
+        </div>
+    ';
+})
             ->rawColumns(['action'])
             ->make(true);
     }
@@ -68,10 +80,14 @@ class TutorialController extends Controller
     ]);
 
     $matkul = $this->getMatkul();
-    $namaMatkul = '';
+    $namaMatkul = 'Tidak Diketahui'; 
+    
     foreach ($matkul as $m) {
-        if ($m['kdmk'] == $request->kode_matkul) {
-            $namaMatkul = $m['name'];
+        // Sesuaikan 'kode_matkul' dan 'nama_matkul' dengan key yang ada di hasil dd() kamu
+        $kdmk_api = $m['kode_matkul'] ?? $m['kdmk'] ?? null;
+        
+        if ($kdmk_api == $request->kode_matkul) {
+            $namaMatkul = $m['nama_matkul'] ?? 'Tidak Diketahui';
             break;
         }
     }
