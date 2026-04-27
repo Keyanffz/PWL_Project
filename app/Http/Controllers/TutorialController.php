@@ -11,26 +11,20 @@ class TutorialController extends Controller
     // Ambil data mata kuliah dari webservice
 private function getMatkul()
 {
-    $fallback = [
-        ['kdmk' => 'A11.64404', 'name' => 'Pemrograman Web Lanjut'],
-        ['kdmk' => 'A11.54314', 'name' => 'Pemrograman Berorientasi Objek'],
-        ['kdmk' => 'A11.54216', 'name' => 'Sistem Basis Data'],
-    ];
-
     $token = session('refresh_token');
-    if (!$token) return $fallback;
+    if (!$token) return [];
 
     $response = Http::withToken($token)
         ->get('https://jwt-auth-eight-neon.vercel.app/getMakul');
 
     if ($response->successful()) {
         $data = $response->json();
-        // Kalau API return Forbidden atau tidak ada data, pakai fallback
-        if (isset($data['msg']) || empty($data['data'])) return $fallback;
-        return $data['data'] ?? $fallback;
+        // Kalau API return Forbidden atau data kosong
+        if (isset($data['msg'])) return [];
+        return $data['data'] ?? [];
     }
 
-    return $fallback;
+    return [];
 }
 
     public function index()
