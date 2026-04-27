@@ -87,7 +87,7 @@ private function getMatkul()
     }
 
     // URL dibuat otomatis dari judul, tidak perlu diisi manual
-    $slug = \Str::slug($request->judul) . '-' . time();
+    $slug = \Str::slug($request->judul) . '-' . time(); //(unix timestamp)
     $baseUrl = url('');
 
     Tutorial::create([

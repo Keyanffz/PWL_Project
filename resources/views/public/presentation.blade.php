@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="refresh" content="30"> {{-- Auto refresh setiap 30 detik --}}
+    <meta http-equiv="refresh" content="5"> {{-- Auto refresh setiap 5 detik --}}
     <title>{{ $tutorial->judul }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
@@ -18,7 +18,7 @@
 
     <!-- Auto refresh indicator -->
     <div class="text-center py-2 bg-green-50 border-b border-green-200">
-        <span class="text-green-600 text-xs font-medium">🔄 Halaman auto refresh setiap 30 detik</span>
+        <span class="text-green-600 text-xs font-medium">🔄 Halaman auto refresh setiap 5 detik</span>
     </div>
 
     <!-- Content -->
