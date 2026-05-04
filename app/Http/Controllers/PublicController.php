@@ -16,7 +16,7 @@ class PublicController extends Controller
         // Hanya tampilkan detail yang statusnya show
         $details = TutorialDetail::where('tutorial_id', $tutorial->id)
             ->where('status', 'show')
-            ->orderBy('order')
+            ->orderBy('order', 'asc') // kita menggunakan asc untuk mengurutkan dari yang terkecil ke terbesar, jika ingin sebaliknya bisa menggunakan desc
             ->get();
 
         return view('public.presentation', compact('tutorial', 'details'));
@@ -29,7 +29,7 @@ class PublicController extends Controller
 
         // Tampilkan SEMUA detail (show & hide) untuk PDF
         $details = TutorialDetail::where('tutorial_id', $tutorial->id)
-            ->orderBy('order')
+            ->orderBy('order', 'asc')
             ->get();
 
         $pdf = Pdf::loadView('public.finished-pdf', compact('tutorial', 'details'));

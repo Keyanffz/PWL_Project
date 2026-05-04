@@ -86,18 +86,16 @@ private function getMatkul()
         }
     }
 
-    // URL dibuat otomatis dari judul, tidak perlu diisi manual
-    $slug = \Str::slug($request->judul) . '-' . time(); //(unix timestamp)
-    $baseUrl = url('');
+$baseUrl = url('');
 
-    Tutorial::create([
-        'judul'            => $request->judul,
-        'kode_matkul'      => $request->kode_matkul,
-        'nama_matkul'      => $namaMatkul,
-        'url_presentation' => $baseUrl . '/presentation/' . $slug,
-        'url_finished'     => $baseUrl . '/finished/' . $slug,
-        'creator_email'    => session('email'),
-    ]);
+Tutorial::create([
+    'judul'            => $request->judul,
+    'kode_matkul'      => $request->kode_matkul,
+    'nama_matkul'      => $namaMatkul,
+    'url_presentation' => $baseUrl . '/presentation/' . \Str::slug($request->judul) . '-' . \Str::uuid(),
+    'url_finished'     => $baseUrl . '/finished/'     . \Str::slug($request->judul) . '-' . \Str::uuid(),
+    'creator_email'    => session('email'),
+]);
 
     return redirect()->route('tutorials.index')->with('success', 'Tutorial berhasil ditambahkan!');
 }
